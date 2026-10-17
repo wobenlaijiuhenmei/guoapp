@@ -39,7 +39,12 @@ class SourceSite {
   );
 
   /// 默认可见的站源：红果、韩小圈、鬼片网、青空次元。
-  static const primaryValues = [hongguo, hanxiaoquan, guipian, sorani];
+  static const primaryValues = [
+    if (!withoutHongguo) hongguo,
+    hanxiaoquan,
+    guipian,
+    sorani,
+  ];
 
   /// 敏感站源：默认隐藏，输入解锁密码后才显示。
   static const restrictedValues = [
@@ -52,7 +57,13 @@ class SourceSite {
     SourceSite('cloudfront', '黄果旧版', '旧 API 剧库'),
   ];
   static const knownValues = [...primaryValues, ...restrictedValues];
-  static const allValues = [...primaryValues, ...restrictedValues];
+  static const allValues = [
+    hongguo,
+    hanxiaoquan,
+    guipian,
+    sorani,
+    ...restrictedValues,
+  ];
   static const values = allSourcesEnabled ? knownValues : [hongguo];
   static bool isAvailable(String id) => values.any((site) => site.id == id);
   static bool isKnown(String id) => allValues.any((site) => site.id == id);

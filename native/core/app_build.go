@@ -3,11 +3,15 @@ package core
 import "errors"
 
 var buildAllSources = "false"
+var buildWithoutHongguo = "false"
 
 var errNativeBuildSource = errors.New("当前版本不包含此站源")
 
 func nativeSourceAvailable(source string) bool {
 	source = canonicalProviderSource(source)
+	if buildWithoutHongguo == "true" && source == sourceHongguo {
+		return false
+	}
 	return source == sourceHongguo || buildAllSources == "true" && isHuangguoProviderSource(source)
 }
 

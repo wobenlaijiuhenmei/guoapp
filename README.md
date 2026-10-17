@@ -2,9 +2,9 @@
 
 > ⚠️ **免责声明**：本项目源码来自网上大名鼎鼎的**鱼佬**（原作者）。我只是把它拿来打包、测试着玩，方便自己用，**不保证任何可用性，随时可能删库**。
 
-Flutter 多端独立短剧 / 影视应用，原名「短剧库 APP」。站源请求、解析、下载和播放均在设备上完成，不依赖自建服务。当前源码版本：**0.2.51+57**。
+Flutter 多端独立短剧 / 影视应用，原名「短剧库 APP」。站源请求、解析、下载和播放均在设备上完成，不依赖自建服务。当前源码版本：**0.2.65+72**。
 
-本轮在 0.2.50 基线上新增两个原生站源：**韩小圈**（`hanxiaoquan`，韩剧 / 韩国电影 / 韩国综艺 / 韩国动漫）与**鬼片网**（`guipian`，鬼片 / 电视剧 / 动漫）。默认可见站源顺序为：**红果 → 韩小圈 → 鬼片 → 青空**。
+本轮新增不含红果的构建变体，保留韩小圈、鬼片、青空和全部原有隐藏站源；默认可见顺序为：**韩小圈 → 鬼片 → 青空**。
 
 > 说明：应用长期按「只维护源码与定向测试，集中验证另行安排」的方式推进。未完成集中验证与真机验收的项目保持未验收状态；历史版本的检查记录不能作为后续新增功能的验收结论。
 
@@ -12,12 +12,13 @@ Flutter 多端独立短剧 / 影视应用，原名「短剧库 APP」。站源�
 | --- | --- | --- |
 | 默认（不加参数） | 红果鉴 | 仅红果 |
 | 加 `--all-sources` | 真果鉴 | 红果、韩小圈、鬼片、青空，以及黄豆、剧果、野果、帝果、黄果视频、黄果 AI、黄果旧版 |
+| 加 `--without-hongguo` | 真果鉴-无红果 | 韩小圈、鬼片、青空，以及黄豆、剧果、野果、帝果、黄果视频、黄果 AI、黄果旧版 |
 
-默认可见站源（红果、韩小圈、鬼片、青空）无需密码；其余站源默认隐藏，在站源管理里通过密码锁解锁后显示。已有受限用户不会自动获得新增站源权限，管理员可在用户管理中勾选。
+默认可见站源无需密码；其余站源默认隐藏，在首页连续点击「最近观看」6 次可打开站源密码锁并解锁或关闭隐藏。已有受限用户不会自动获得新增站源权限，管理员可在用户管理中勾选。
 
-这是**编译选项**，应用内不能切换版本。标题、Android 桌面名称与电视横幅、Windows 窗口与分发文件名、iOS 显示名随编译选项变化。界面、站源调用、原生下载调度同时限制可用站源；红果版不会访问或继续执行其他站源的旧任务。
+这是**编译选项**，应用内不能切换版本。标题、Android 桌面名称、Windows 窗口与分发文件名、iOS 显示名随编译选项变化。界面、站源调用、原生下载调度同时限制可用站源；单源版和无红果版不会访问或继续执行其他站源的旧任务。
 
-两版保留原 Android / iOS 应用标识及数据目录；Android 使用同一签名可相互覆盖升级，不能作为两个独立正式应用并排安装。切换版本保留追剧、观看记录、用户权限和下载记录；备份格式保持兼容。
+红果版与全站源版保留原 Android / iOS 应用标识及数据目录，Android 使用同一签名可相互覆盖升级。无红果 Android 版使用独立应用标识和数据目录，可与前两版并排安装；备份格式保持兼容。
 
 ## 使用
 
@@ -67,7 +68,7 @@ Flutter 多端独立短剧 / 影视应用，原名「短剧库 APP」。站源�
 
 | 平台 | 包与状态 |
 | --- | --- |
-| Android 8.0+ | 三架构（arm64-v8a / armeabi-v7a / x86_64）APK；同一签名可覆盖升级 |
+| Android 8.0+ | 默认与全站源版提供三架构 APK；无红果版已生成 arm64-v8a APK，待设备验收 |
 | Windows 10/11 x64 | 完整 ZIP 解压后运行 `hongguojian.exe` / `zhenguojian.exe`，保留所有 DLL 与 `data`；局域网原生发现依赖 Windows 10 1903+ |
 | Android TV | 与手机共用源码，自动识别电视模式并保持横屏；待电视 / 盒子实机验收 |
 | iOS 15.1+ | 已加入工程、Go 核心链接、媒体依赖、文件管理与构建脚本；iOS 播放页禁用 media_kit_video 硬件纹理加速以规避 libmpv 渲染崩溃；待 Xcode 构建与真机验收，无已签名 IPA |
@@ -106,6 +107,7 @@ Flutter `3.47.4`、Dart `3.12+`、Go `1.24.1+`、Python `3.10+`。Android 需要
 ~~~sh
 python3 scripts/build_android.py                 # 红果鉴
 python3 scripts/build_android.py --all-sources   # 真果鉴
+python3 scripts/build_android.py --without-hongguo --abi arm64-v8a  # 真果鉴-无红果
 python3 scripts/build_android.py --abi arm64-v8a
 python3 scripts/build_android.py --cn-mirrors    # 国内镜像
 ~~~
@@ -123,7 +125,7 @@ python3 scripts/build_ios.py --core-only [--simulator]
 python3 scripts/build_ios.py --export-options /path/to/ExportOptions.plist
 ~~~
 
-产物在 `dist/android`、`dist/windows`、`dist/ios`，红果版以 `hongguojian-` 开头，全站源版以 `zhenguojian-` 开头。
+产物在 `dist/android`、`dist/windows`、`dist/ios`，红果版以 `hongguojian-` 开头，全站源版以 `zhenguojian-` 开头，无红果版以 `zhenguojian-no-hongguo-` 开头。
 
 首次 Android 调试先编译对应架构核心，再运行：
 
